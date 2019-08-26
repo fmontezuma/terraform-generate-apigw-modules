@@ -1,0 +1,8 @@
+{
+    "api_gw_folder" : "./",
+    "sources_folder" : "sources/",
+    "generated_folder" : "generated/",
+    "generated_modules_file_name" : "microservices",
+    "vpc_link_id" : "REFERENCE_TO_VPC_LINK_ID",
+    "authorizer_arns" : ["AUTHORIZER_ARN_1","AUTHORIZER_ARN_2"]
+}

@@ -1,0 +1,40 @@
+{
+    "methods" : [
+        {
+            "http_method" : "ANY", 
+            "authorization_scopes" : ["microservice/full"], 
+            "uri" : "URL_OF_SERVICE",
+            "request_parameters" : {}
+        }
+    ],
+    "resources" : [
+        {
+            "path" : "level1",
+            "methods" : [
+                { 
+                    "http_method" : "ANY", 
+                    "authorization_scopes" : ["microservice/full"], 
+                    "uri" : "URL_OF_SERVICE",
+                    "request_parameters" : {
+                        "method.request.path.proxy" : true
+                    }
+                }
+            ],
+            "resources" : [
+                {
+                    "path" : "level2",
+                    "methods" : [
+                        { 
+                            "http_method" : "ANY", 
+                            "authorization_scopes" : ["microservice/full"], 
+                            "uri" : "URL OF SERVICE",
+                            "request_parameters" : {
+                                "method.request.path.proxy" : true
+                            }
+                        }
+                    ]
+                }                
+            ]
+        }
+    ]
+}
