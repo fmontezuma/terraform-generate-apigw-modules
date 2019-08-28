@@ -13,7 +13,10 @@ def aws_api_gateway_resource(rsc):
 
 def aws_api_gateway_method(method):
     method["authorization_scopes"] = json.dumps(method["authorization_scopes"])
-    method["request_parameters"] = json.dumps(method["request_parameters"]).replace(":","=")
+    method["method_request_parameters"] = method["method_request_parameters"] if ("method_request_parameters" in method) else {}
+    if (method["rsc_path"] == "{proxy+}"):
+      method["method_request_parameters"]["method.request.path.proxy"] = True
+      method["method_request_parameters"] = json.dumps(method["method_request_parameters"]).replace(":","=")
     return '''resource "aws_api_gateway_method" "{rsc_name}-{http_method_name}" {{
   rest_api_id   = {rsc_rest_api_id}
   resource_id   = {rsc_id}
@@ -21,7 +24,7 @@ def aws_api_gateway_method(method):
   authorization = "COGNITO_USER_POOLS"
   authorizer_id = {rsc_authorizer_id}
   authorization_scopes = {authorization_scopes}
-  request_parameters = {request_parameters}
+  request_parameters = {method_request_parameters}
 }}'''.format(**method)
 
 def aws_api_gateway_method_settings(method):
@@ -39,6 +42,10 @@ def aws_api_gateway_method_settings(method):
 
 def aws_api_gateway_integration(method):
     integrations.append("aws_api_gateway_integration."+method["rsc_name"]+"-"+method["http_method_name"])
+    method["integration_request_parameters"] = method["integration_request_parameters"] if ("integration_request_parameters" in method) else {}
+    if (method["rsc_path"] == "{proxy+}"):
+      method["integration_request_parameters"]["integration.request.path.proxy"] = "method.request.path.proxy"
+      method["integration_request_parameters"] = json.dumps(method["integration_request_parameters"]).replace(":","=")
     return '''resource "aws_api_gateway_integration" "{rsc_name}-{http_method_name}" {{
   rest_api_id = {rsc_rest_api_id}
   resource_id = {rsc_id}
@@ -48,6 +55,7 @@ def aws_api_gateway_integration(method):
   connection_id   = var.vpc_link_id
   integration_http_method = "ANY"
   uri         = "{uri}"
+  request_parameters = {integration_request_parameters}
   depends_on = ["aws_api_gateway_method.{rsc_name}-{http_method_name}"]
 }}'''.format(**method)
 
@@ -75,6 +83,7 @@ def resource(rsc):
     s = aws_api_gateway_resource(rsc) + "\n"
     for method in rsc["methods"]:
         method["rsc_name"] = rsc["name"]
+        method["rsc_path"] = rsc["path"]
         method["rsc_rest_api_id"] = rsc["rest_api_id"]
         method["rsc_id"] = "aws_api_gateway_resource."+rsc["name"]+".id"
         method["rsc_authorizer_id"] = rsc["authorizer_id"]
@@ -122,6 +131,7 @@ resource "aws_api_gateway_authorizer" "authorizer" {
 
 for method in js["methods"]:
     method["rsc_name"] = "root"
+    method["rsc_path"] = "root"
     method["rsc_rest_api_id"] = "aws_api_gateway_rest_api.gra.id"
     method["rsc_id"] = "aws_api_gateway_rest_api.gra.root_resource_id"
     method["rsc_authorizer_id"] = "aws_api_gateway_authorizer.authorizer.id"
