@@ -41,6 +41,7 @@ def aws_api_gateway_method_settings(method):
 }}'''.format(**method)
 
 def aws_api_gateway_integration(method):
+    method["uri"] = method["uri"].replace("${","$${")
     integrations.append("aws_api_gateway_integration."+method["rsc_name"]+"-"+method["http_method_name"])
     method["integration_request_parameters"] = method["integration_request_parameters"] if ("integration_request_parameters" in method) else {}
     if (method["rsc_path"] == "{proxy+}"):
@@ -66,7 +67,10 @@ def aws_api_gateway_deployment(integrations):
   stage_name = "env"
   stage_description = filesha1("${{path.module}}/main.tf")
   description = filesha1("${{path.module}}/main.tf")
-}}'''.format(integrations=json.dumps(integrations))
+  variables = {{
+    "integration_dns" = "{dns}"
+  }}
+}}'''.format(integrations=json.dumps(integrations), dns=js["integration_dns"])
 
 def resources(rscs):
     s = ""
