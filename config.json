@@ -4,5 +4,6 @@
     "generated_folder" : "generated/",
     "generated_modules_file_name" : "microservices",
     "vpc_link_id" : "REFERENCE_TO_VPC_LINK_ID",
-    "authorizer_arns" : ["AUTHORIZER_ARN_1","AUTHORIZER_ARN_2"]
+    "authorizer_arns" : ["AUTHORIZER_ARN_1","AUTHORIZER_ARN_2"],
+    "vpc_endpoint_id" : "REFERENCE_TO_VPCE_ID"
 }

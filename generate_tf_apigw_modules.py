@@ -19,8 +19,9 @@ def append_module(module_name):
   name = "{module_name}"
   vpc_link_id = {vpc_link_id}
   authorizer_arns = {authorizer_arns}
+  vpc_endpoint_id = "{vpc_endpoint_id}"
 }}
-'''.format(module_name=module_name, generated_folder=generated_folder, vpc_link_id=vpc_link_id, authorizer_arns=json.dumps(authorizer_arns))
+'''.format(module_name=module_name, generated_folder=generated_folder, vpc_link_id=vpc_link_id, authorizer_arns=json.dumps(authorizer_arns), vpc_endpoint_id=vpc_endpoint_id)
 
 try:
      print("------------------------------------")
